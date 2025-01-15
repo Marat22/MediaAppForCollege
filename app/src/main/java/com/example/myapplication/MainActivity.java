@@ -1,64 +1,82 @@
 package com.example.myapplication;
-
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.VideoView;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    VideoView videoPlayer;
+
+    MediaPlayer mPlayer;
+
+    Button playButton, pauseButton, stopButton;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        videoPlayer = findViewById(R.id.videoPlayer);
-        Uri myVideoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.video);
-        videoPlayer.setVideoURI(myVideoUri);
+        mPlayer = MediaPlayer.create(this, R.raw.music);
 
-        ViewGroup.LayoutParams defaultParams = videoPlayer.getLayoutParams();
-
-        videoPlayer.setOnClickListener(new View.OnClickListener() {
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
-            public void onClick(View v) {
-                ViewGroup.LayoutParams currentParams = videoPlayer.getLayoutParams();
-
-                if (currentParams.width != defaultParams.width && currentParams.height != defaultParams.height) {
-                    videoPlayer.setLayoutParams(defaultParams);
-                } else {
-                    videoPlayer.setLayoutParams(
-                            new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-
-                                    ViewGroup.LayoutParams.MATCH_PARENT));
-                }
+            public void onCompletion(MediaPlayer mp) {
+                stopPlay();
             }
 
         });
-        videoPlayer.start();
+
+        playButton = findViewById(R.id.playButton);
+        pauseButton = findViewById(R.id.pauseButton);
+        stopButton = findViewById(R.id.stopButton);
+
+        pauseButton.setEnabled(false);
+
+        stopButton.setEnabled(false);
+    }
+
+    private void stopPlay() {
+        mPlayer.stop();
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        try {
+            mPlayer.prepare();
+            mPlayer.seekTo(0);
+            playButton.setEnabled(true);
+        } catch (Throwable t) {
+            Toast.makeText(this, t.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void play(View view) {
-//        R.id.pause
-        videoPlayer.start();
+        mPlayer.start();
+        playButton.setEnabled(false);
+        pauseButton.setEnabled(true);
+        stopButton.setEnabled(true);
+
     }
 
     public void pause(View view) {
-        videoPlayer.pause();
+        mPlayer.pause();
+        playButton.setEnabled(true);
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(true);
+
     }
 
     public void stop(View view) {
-        videoPlayer.stopPlayback();
-        videoPlayer.resume();
+        stopPlay();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mPlayer.isPlaying()) {
+            stopPlay();
+        }
     }
 }
