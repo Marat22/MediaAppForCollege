@@ -1,29 +1,57 @@
 package com.example.myapplication;
 
-import android.os.Bundle;
-import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ScrollView;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 
 public class MainActivity2 extends AppCompatActivity {
 
+    Button buttonScrollUp, buttonScrollDown, buttonScrollToTop;
+    ScrollView myScroll;
+
+
+    /**
+     * Called when the activity is first created.
+     */
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main2);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        buttonScrollUp = (Button) findViewById(R.id.scrollup);
+        buttonScrollDown = (Button) findViewById(R.id.scrolldown);
+        buttonScrollToTop = (Button) findViewById(R.id.scrolltotop);
+        myScroll = (ScrollView) findViewById(R.id.myview);
+
+        buttonScrollUp.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+// TODO Auto-generated method stub
+                myScroll.scrollBy(0, +20);
+            }
         });
-        TextView text = findViewById(R.id.longText);
-        text.setText("long text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nlong text\nLAST LINE");
 
+        buttonScrollDown.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+// TODO Auto-generated method stub
+                myScroll.scrollBy(0, -20);
+            }
+        });
 
+        buttonScrollToTop.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+// TODO Auto-generated method stub
+                myScroll.scrollTo(0, 0);
+            }
+        });
     }
 }
